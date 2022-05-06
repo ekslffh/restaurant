@@ -8,8 +8,6 @@ import com.example.restaurant.wishlist.entity.WishListEntity;
 import com.example.restaurant.wishlist.repository.WishListRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -98,7 +96,7 @@ public class WishListService {
     public List<WishListDto> findAll() {
 
         return wishListRepository
-                .ListAll()
+                .findAll()
                 .stream()
                 .map(it->entityToDto(it))
                 .collect(Collectors.toList());
