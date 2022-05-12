@@ -9,6 +9,7 @@ import com.example.restaurant.wishlist.repository.WishListRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -111,7 +112,8 @@ public class WishListService {
         if(wishItem.isPresent()) {
             var item = wishItem.get();
             item.setVisitCount(item.getVisitCount() + 1);
+            item.setVisit(true);
+            item.setLastVisitDate(LocalDateTime.now());
         }
-
     }
 }
