@@ -2,6 +2,13 @@ plugins {
     id 'org.springframework.boot' version '2.6.6'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'java'
+    id 'war'
+}
+
+bootWar {
+    archiveBaseName = 'restaurant'
+    archiveFileName = 'Root.war'
+    archiveVersion = "0.0.0"
 }
 
 group = 'com.example'
@@ -30,3 +37,51 @@ dependencies {
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+def reactDir = "$projectDir/src/main/frontend/react-intllij";
+
+sourceSets{
+    main{
+        resources{
+            srcDirs = ["$projectDir/src/main/resources"]
+        }
+    }
+}
+
+processResources{
+    dependsOn "copyReactBuildFiles"
+}
+
+task installReact(type:Exec){
+    workingDir "$reactDir"
+    inputs.dir "$reactDir"
+    group = BasePlugin.BUILD_GROUP
+
+    if(System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')){
+        commandLine "npm.cmd", "audit", "fix"
+        commandLine "npm.cmd", "install"
+    } else {
+        commandLine "npm", "audit", "fix"
+        commandLine "npm", "install"
+    }
+}
+
+task buildReact(type: Exec){
+    dependsOn "installReact"
+    workingDir "$reactDir"
+    inputs.dir "$reactDir"
+    group = BasePlugin.BUILD_GROUP
+
+    if(System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')){
+        commandLine "npm.cmd", "run-script", "build"
+    }else{
+        commandLine "npm", "run-script", "build"
+    }
+}
+
+task copyReactBuildFiles(type: Copy){
+    dependsOn "buildReact"
+    from "$reactDir/build"
+    into "$projectDir/src/main/resources/static"
+}
+
